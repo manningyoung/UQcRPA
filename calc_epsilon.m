@@ -1,7 +1,7 @@
 function [ epsmat ] = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,vcoul0,vcoul,nmtx0,nmtx)
 % Constructs the contstrained inverse dielectric matrix from the full
 % polarisability P and that of the active subspace P_a according to
-%   epsilon_r^{-1} = 1 - v*(P-P_a)
+%   epsilon_r = 1 - v*(P-P_a)
 % P and P_a must be the same size (nmtx).
 
 nmtx = [nmtx0; nmtx]; % append nmtx(q0) to the list

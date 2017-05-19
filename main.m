@@ -33,8 +33,8 @@ chimat = h5read([datadir 'chimat.h5'],'/mats/matrix');
 chi0mat = h5read([datadir 'chimat.h5'],'/mats/matrix');
 chimat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
 chi0mat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
-nmtx = 
-nmtx0 = 
+nmtx = ;
+nmtx0 = ;
 vcoul = h5read([datadir 'epsmat.h5'],'/eps_header/gspace/vcoul');
 vcoul0 = h5read([datadir 'eps0mat.h5'],'/eps_header/gspace/vcoul');
 
