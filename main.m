@@ -6,12 +6,12 @@
 % MATLAB R2017a / BerkeleyGW 1.2 / wannier90 2.1.0
 %
 % Required inputs:
-%   chimat.h5       [BerkeleyGW]
 %   chi0mat.h5      [BerkeleyGW]
-%   chimat_a.h5     [BerkeleyGW]
+%   chimat.h5       [BerkeleyGW]
 %   chi0mat_a.h5    [BerkeleyGW]
-%   epsmat.h5       [BerkeleyGW]
+%   chimat_a.h5     [BerkeleyGW]
 %   eps0mat.h5      [BerkeleyGW]
+%   epsmat.h5       [BerkeleyGW]
 %   epsilon.log     [BerkeleyGW]
 %   seedname_u.mat  [wannier90]
 %   {UNKXXXXX.1}    [wannier90]
@@ -28,20 +28,41 @@ jband = 1;
 
 %% CONSTRUCTION OF THE SCREENED INTERACTION W_{GG'}(q)
 
-% 
-chimat = h5read([datadir 'chimat.h5'],'/mats/matrix');
-chi0mat = h5read([datadir 'chimat.h5'],'/mats/matrix');
-chimat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
-chi0mat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
-nmtx = ;
-nmtx0 = ;
-vcoul = h5read([datadir 'epsmat.h5'],'/eps_header/gspace/vcoul');
-vcoul0 = h5read([datadir 'eps0mat.h5'],'/eps_header/gspace/vcoul');
+% Expected filenames
+f_chi0mat = 'chi0mat.h5';
+f_chimat = 'chimat.h5';
+f_chi0mat_a = 'chi0mat.h5'; % FIXME: change back to chi0mat_a.h5
+f_chimat_a = 'chimat.h5'; % FIXME: change back to chimat_a.h5
+f_eps0mat = 'eps0mat.h5';
+f_epsmat = 'epsmat.h5';
 
+% Read polarisability (chi) matrices
+chi0mat = h5read([datadir f_chi0mat],'/mats/matrix');
+chimat = h5read([datadir f_chimat],'/mats/matrix');
+chi0mat_a = h5read([datadir f_chi0mat_a],'/mats/matrix');
+chimat_a = h5read([datadir f_chimat_a],'/mats/matrix');
 
+chi0mat_a = zeros(size(chi0mat)); % FIXME: remove after testing
+chimat_a = zeros(size(chimat)); % FIXME: remove after testing
 
-epsmat = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,vcoul0,vcoul,nmtx0,nmtx);
+% And their true dimensions, since the matrices are padded up to max(nmtx)
+nmtx0 = h5read([datadir f_chi0mat],'/eps_header/gspace/nmtx');
+nmtx = h5read([datadir f_chimat],'/eps_header/gspace/nmtx');
+nmtx0_a = h5read([datadir f_chi0mat_a],'/eps_header/gspace/nmtx');
+nmtx_a = h5read([datadir f_chimat_a],'/eps_header/gspace/nmtx');
 
+if sum([nmtx0; nmtx] ~= [nmtx0_a; nmtx_a]) ~= 0
+    error('P and P_a must be the same size.');
+end
+
+% Read Coulomb interaction from epsmat, since it's not initialised in chimat
+vcoul0 = h5read([datadir f_eps0mat],'/eps_header/gspace/vcoul');
+vcoul = h5read([datadir f_epsmat],'/eps_header/gspace/vcoul');
+
+% Construct inverse dielectric matrix
+[epsmat, vcoul_full] = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,nmtx0,nmtx,vcoul0,vcoul);
+
+%%
 % Construct the full W matrix
 [W_matrix, Wp_diag] = calc_screened_matrix(epsmat_full,vcoul_full,nmtx_full);
 
