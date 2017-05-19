@@ -1,18 +1,22 @@
 % UQcRPA
 % Copyright (c) 2017, The University of Queensland
 %
-% Version 0.1 (Apr 2017)
+% Version 0.1 (May 2017)
 % M. C. Young, A. C. Jacko, B. J. Powell
 % MATLAB R2017a / BerkeleyGW 1.2 / wannier90 2.1.0
 %
 % Required inputs:
+%   chimat.h5       [BerkeleyGW]
+%   chi0mat.h5      [BerkeleyGW]
+%   chimat_a.h5     [BerkeleyGW]
+%   chi0mat_a.h5    [BerkeleyGW]
 %   epsmat.h5       [BerkeleyGW]
 %   eps0mat.h5      [BerkeleyGW]
 %   epsilon.log     [BerkeleyGW]
 %   seedname_u.mat  [wannier90]
 %   {UNKXXXXX.1}    [wannier90]
 
-% Set the location of the input directory (blank if pwd)
+% Set the location of the input directory (blank if PWD)
 datadir = '~/Downloads/data/';
 
 % Define the Wannier bands
@@ -24,21 +28,19 @@ jband = 1;
 
 %% CONSTRUCTION OF THE SCREENED INTERACTION W_{GG'}(q)
 
-% Read in epsilon^{-1}(q=q0)
-eps0mat = h5read([datadir 'eps0mat.h5'],'/mats/matrix');
-nmtx0 = h5read([datadir 'eps0mat.h5'],'/eps_header/gspace/nmtx');
-
-% Read in epsilon^{-1}(q)
-epsmat = h5read([datadir 'epsmat.h5'],'/mats/matrix');
-nmtx = h5read([datadir 'epsmat.h5'],'/eps_header/gspace/nmtx');
-
-% Merge them
-[epsmat_full, nmtx_full] = merge_epsmat(epsmat,eps0mat,nmtx,nmtx0);
-
-% Do the same for the bare Coulomb interaction
-vcoul0 = h5read([datadir 'eps0mat.h5'],'/eps_header/gspace/vcoul');
+% 
+chimat = h5read([datadir 'chimat.h5'],'/mats/matrix');
+chi0mat = h5read([datadir 'chimat.h5'],'/mats/matrix');
+chimat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
+chi0mat_a = h5read([datadir 'chimat_a.h5'],'/mats/matrix');
+nmtx = 
+nmtx0 = 
 vcoul = h5read([datadir 'epsmat.h5'],'/eps_header/gspace/vcoul');
-vcoul_full = merge_vcoul(vcoul,vcoul0,nmtx);
+vcoul0 = h5read([datadir 'eps0mat.h5'],'/eps_header/gspace/vcoul');
+
+
+
+epsmat = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,vcoul0,vcoul,nmtx0,nmtx);
 
 % Construct the full W matrix
 [W_matrix, Wp_diag] = calc_screened_matrix(epsmat_full,vcoul_full,nmtx_full);
@@ -50,7 +52,8 @@ vcoul_full = merge_vcoul(vcoul,vcoul0,nmtx);
 
 % Read in all UNKp.s files and apply the transformation
 % unk = transform_bloch(datadir,unitary_matrix,wann_bands,kpoints);
-load([datadir 'unk.mat']); % precalculated
+% OR save workspace and load the precalculated u_{nk}:
+load([datadir 'unk.mat']);
 
 %% CALCULATION OF THE AUXILIARY FUNCTIONS F_{ij}(G,q)
 

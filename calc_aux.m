@@ -1,7 +1,7 @@
 function [ Fij , gindex , ekin] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,iband,jband)
-% Calculates the auxiliary functions F_{ij}(G,q) using the FFT method. 
-% Also returns gindex for mapping indices in gvecs to the corresponding Fij,
-% and ekin = |q+G|^2 for plotting/debugging.
+% Calculates the auxiliary functions F_{ij}(G,q) using the FFT method.
+% Also returns gindex for mapping gvecs to the corresponding Fij, and
+% kinetic energies |q+G|^2 (in Rydberg?).
 
 fprintf('Calculating F_{%d%d}...\n',iband,jband);
 
@@ -10,16 +10,16 @@ fprintf('Calculating F_{%d%d}...\n',iband,jband);
 if (Nfft(1) == Nfft(2)) && (Nfft(2) == Nfft(3))
     N = Nfft(1);
 else
-    error('FFT not spatially symmetric.')
+    error('FFT not spatially symmetric - check Nfft.')
 end
 
 % Setup the real and reciprocal space intervals along one dimension
 % so we can determine the coordinates (G-vectors) of the FFT output.
-% Some of this is not strictly necessary but may be useful for debugging.
-x_total = 1; % normalized spatial interval
+% The real space interval is normalized so that dg=1.
+x_total = 1;
 dx = x_total/N;
 g_max = 1/(2*dx);
-dg = 1/x_total; % =1 by definition (else outptut doesn't map to G-vectors)
+dg = 1/x_total;
 if mod(N,2)==0 % even FFT
     x = -x_total/2:dx:x_total/2-dx;
     g = -g_max:dg:g_max-dg;
@@ -39,14 +39,12 @@ for iq = 1:length(qpoints)
         gvec = [g(ix) g(iy) g(iz)];
         [found,idx] = ismember(gvec,gvecs{iq},'rows');
         if found
-            gindex{iq}(idx) = ig;
-            % So gindex maps an index in gvecs to an Fij
+            gindex{iq}(idx) = ig; % maps an index in gvecs to an Fij
         end
-        % Also store kinetic energies for all G-vectors
-        ekin{iq}(ig) = norm(qpoints(iq,:)+gvec)^2; % |q+G|^2
+        ekin{iq}(ig) = norm(qpoints(iq,:)+gvec)^2; % kinetic energy |q+G|^2
     end
     
-    for ik = 1:length(kpoints)
+    for ik = 1:length(kpoints) % FFT each k-point
         
         % Determine the index of the k+q point
         kqpoint = mod(kpoints(ik,:)+qpoints(iq,:),1); % k+q (mod BZ)
@@ -80,10 +78,12 @@ for iq = 1:length(qpoints)
                 end
             end
         end
+        
     end
+    
 end
 
-% Do the k-point sum for each G-vector and q-point.
+% Do the k-space integration (sum) for each G-vector and q-point.
 fprintf('Summing over k-points\n');
 for iq = 1:length(qpoints)
     for ig = 1:N^3
@@ -91,7 +91,7 @@ for iq = 1:length(qpoints)
         for ik = 1:length(kpoints)
             ksum = ksum + fftdata1d{iq,ik}(ig)*kweights(ik);
         end
-        Fij{iq}(ig) = ksum/length(kpoints); % normalise by 1/N_k
+        Fij{iq}(ig) = ksum/length(kpoints); % normalize by 1/N_k
     end
 end
 
