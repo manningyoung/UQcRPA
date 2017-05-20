@@ -1,10 +1,13 @@
 function [epsmat, vcoul_full] = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,nmtx0,nmtx,vcoul0,vcoul)
-% Constructs the constrained inverse dielectric matrix from the full
-% polarisability P and active polarisability P_a according to
-%   epsilon^{-1} = [1-v(P-P_a)]^{-1}.
+% Constructs the inverse constrained dielectric matrix from the full
+% polarisability P and active polarisability P^a according to
+%
+%   \epsilon_{GG'}(q) = \delta_{GG'} - v(q+G)*(P_{GG'}(q)-P_{GG'}^{a}(q))
 %
 % Returns a cell array epsmat containing an nmtx(q)-by-nmtx(q) matrix for each
 % q (including q0), with no padding. Also returns corresponding vcoul.
+
+fprintf('Constructing inverse constrained dielectric matrix...');
 
 % Handle q0 and store it in the first cell of epsmat
 for ig = 1:nmtx0
@@ -32,4 +35,7 @@ for iq = 1:length(nmtx)+1
     end
     epsmat{iq} = inv(epsmat{iq});
 end
+
+fprintf('Done!\n');
+
 end
