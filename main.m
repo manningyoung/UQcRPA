@@ -1,32 +1,16 @@
-% UQcRPA
-% Copyright (c) 2017, The University of Queensland
+% UQcRPA - main job script
+% See README for instructions
 %
-% Version 0.1 (May 2017)
-% M. C. Young, A. C. Jacko, B. J. Powell
-% MATLAB R2017a / BerkeleyGW 1.2 / wannier90 2.1.0
-%
-% Required inputs:
-%   chi0mat.h5      [BerkeleyGW]
-%   chimat.h5       [BerkeleyGW]
-%   chi0mat_a.h5    [BerkeleyGW]
-%   chimat_a.h5     [BerkeleyGW]
-%   eps0mat.h5      [BerkeleyGW]
-%   epsmat.h5       [BerkeleyGW]
-%   epsilon.log     [BerkeleyGW]
-%   seedname_u.mat  [wannier90]
-%   {UNKXXXXX.1}    [wannier90]
+% TODO: clean up
 
-% Set the location of the input directory (blank if PWD)
 datadir = '~/Downloads/data/';
-
-% Define the Wannier bands
 wann_bands = 1:8;
-
-% Define the matrix element U_{ij}
 iband = 1;
 jband = 1;
 
 %% CONSTRUCTION OF THE SCREENED INTERACTION W_{GG'}(q)
+
+tic;
 
 % Expected filenames
 f_chi0mat = 'chi0mat.h5';
@@ -62,9 +46,8 @@ vcoul = h5read([datadir f_epsmat],'/eps_header/gspace/vcoul');
 % Construct inverse dielectric matrix
 [epsmat, vcoul_full] = calc_epsilon(chi0mat,chimat,chi0mat_a,chimat_a,nmtx0,nmtx,vcoul0,vcoul);
 
-%%
-% Construct the full W matrix
-[W_matrix, Wp_diag] = calc_screened_matrix(epsmat_full,vcoul_full,nmtx_full);
+% Construct the screened interaction matrix
+[W_matrix, Wp_diag] = calc_screened_matrix(epsmat,vcoul_full,[nmtx0; nmtx]);
 
 %% CONSTUCTION OF THE TRANSFORMED BLOCH STATES u_{nk}(r)
 
@@ -72,9 +55,13 @@ vcoul = h5read([datadir f_epsmat],'/eps_header/gspace/vcoul');
 [unitary_matrix, kpoints] = read_unitary([datadir 'silicon_u.mat']);
 
 % Read in all UNKp.s files and apply the transformation
-% unk = transform_bloch(datadir,unitary_matrix,wann_bands,kpoints);
-% OR save workspace and load the precalculated u_{nk}:
-load([datadir 'unk.mat']);
+if exist([datadir 'unk.mat']) == 2
+    fprintf('Loading precalculated unk from file...');
+    load([datadir 'unk.mat']);
+    fprintf('Done.\n');
+else
+    unk = transform_bloch(datadir,unitary_matrix,wann_bands,kpoints);
+end
 
 %% CALCULATION OF THE AUXILIARY FUNCTIONS F_{ij}(G,q)
 
@@ -99,8 +86,10 @@ end
 
 % W_matrix is ordered wrt the epsilon G-space while Fii, Fjj are not;
 % we require gindexii and gindexjj to map to the correct index
-Uij = calc_matrix_element(W_matrix,Fii,Fjj,gindex,nmtx_full);
-fprintf('Done!\n');
+Uij = calc_matrix_element(W_matrix,Fii,Fjj,gindex,[nmtx0; nmtx]);
+fprintf('Calculation finished!\n');
+Uij
+toc
 
 %% PLOTTING - MESSY
 % close all

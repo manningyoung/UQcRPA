@@ -36,6 +36,6 @@ for iq = 1:length(nmtx)+1
     epsmat{iq} = inv(epsmat{iq});
 end
 
-fprintf('Done!\n');
+fprintf('Done.\n');
 
 end

@@ -1,21 +1,23 @@
 function [ Fij , gindex , ekin] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,iband,jband)
-% Calculates the auxiliary functions F_{ij}(G,q) using the FFT method.
-% Also returns gindex for mapping gvecs to the corresponding Fij, and
-% kinetic energies |q+G|^2 (in Rydberg?).
+% Calculates the auxiliary function F_{i,j} using the FFT method.
+%
+% Also returns gindex for mapping G-vectors in gvecs to the corresponding Fij.
+% And ekin = |q+G|^2 (useful for plotting/debugging).
+%
+% FIXME: assumes spatially symmetric FFT (Nfft(1)=Nfft(2)=Nfft(3)=N).
 
-fprintf('Calculating F_{%d%d}...\n',iband,jband);
+fprintf('Calculating F_{%d,%d}...\n',iband,jband);
 
-% For simplicity we assume Nfft(1)=Nfft(2)=Nfft(3)=N
-% i.e., the FFT is spatially symmetric. Check:
 if (Nfft(1) == Nfft(2)) && (Nfft(2) == Nfft(3))
     N = Nfft(1);
 else
     error('FFT not spatially symmetric - check Nfft.')
 end
+scale = 1/N^3;
 
 % Setup the real and reciprocal space intervals along one dimension
 % so we can determine the coordinates (G-vectors) of the FFT output.
-% The real space interval is normalized so that dg=1.
+% The real space interval is normalised so that dg=1.
 x_total = 1;
 dx = x_total/N;
 g_max = 1/(2*dx);
@@ -28,10 +30,9 @@ else % odd FFT
     g = -g_max:dg:g_max;
 end
 
-scale = 1/N^3;
-
 for iq = 1:length(qpoints)
-    fprintf('Doing FFTs at q-point %d of %d\n',iq,length(qpoints));
+    
+    fprintf('Doing FFTs at q-point %d of %d...',iq,length(qpoints));
     
     % Determine which G-vectors the linear indices map to in reciprocal space
     for ig = 1:N^3
@@ -81,18 +82,24 @@ for iq = 1:length(qpoints)
         
     end
     
+    fprintf('Done.\n');
+    
 end
 
-% Do the k-space integration (sum) for each G-vector and q-point.
-fprintf('Summing over k-points\n');
+% Do the k-space integration (sum) for each G-vector and q-point
+
+fprintf('Summing over k-points...');
+
 for iq = 1:length(qpoints)
     for ig = 1:N^3
         ksum = 0;
         for ik = 1:length(kpoints)
             ksum = ksum + fftdata1d{iq,ik}(ig)*kweights(ik);
         end
-        Fij{iq}(ig) = ksum/length(kpoints); % normalize by 1/N_k
+        Fij{iq}(ig) = ksum/length(kpoints); % normalise by 1/N_k
     end
 end
+
+fprintf('Done.\n');
 
 end

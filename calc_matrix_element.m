@@ -15,6 +15,6 @@ for iq = 1:length(nmtx)
     end
 end
 
-fprintf('Done!');
+fprintf('Done.\n');
 
 end
