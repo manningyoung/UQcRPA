@@ -2,7 +2,9 @@ function [ Uij ] = calc_matrix_element(W_matrix,Fii,Fjj,gindex,nmtx)
 % Calculates the screened Coulomb matrix element U_{i,j}.
 %
 % Fii and Fjj are calculated for all G, but the sum is performed over the subset
-% in gindex due to the dielectric energy cutoff on W.
+% in gindex due to the dielectric energy cutoff on W. W_matrix is ordered wrt
+% the epsilon G-space (|q+G|^2) while Fii, Fjj are not; we require gindex to
+% match the correct elements.
 
 fprintf('Taking matrix element in the Wannier basis...');
 

@@ -1,5 +1,5 @@
 function [ kweights ] = read_kweights(datadir)
-% temporary weights
+% NOT YET IMPLEMENTED - assumes no k-point reduction (on Wannier grid).
 
 kweights = ones(1,125);
 
