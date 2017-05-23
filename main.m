@@ -8,6 +8,7 @@
 %% User input
 
 datadir = '~/Downloads/data/';
+seedname = 'SrVO3';
 wann_bands = 1:8;
 iband = 1;
 jband = 1;
@@ -46,7 +47,7 @@ vcoul = h5read([datadir 'epsmat.h5'],'/eps_header/gspace/vcoul');
 %% Calculation of the transformed Bloch states
 
 % Read unitary transformation matrix
-[unitary_matrix, kpoints] = read_unitary([datadir 'silicon_u.mat']);
+[unitary_matrix, kpoints] = read_unitary([datadir seedname '_u.mat']);
 
 % Apply transformation to the reference Bloch states
 if exist([datadir 'unk.mat']) == 2
