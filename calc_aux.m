@@ -49,8 +49,8 @@ for iq = 1:length(qpoints)
         
         % Determine the index of the k+q point
         kqpoint = mod(kpoints(ik,:)+qpoints(iq,:),1); % k+q (mod BZ)
-        kqpoint = round(kqpoint,1); % avoids round-off error - CAUTION
-        [found,ikq] = ismember(round(kqpoint,1),kpoints,'rows');
+        kqpoint = round(kqpoint,6); % avoids round-off error - CAUTION
+        [found,ikq] = ismember(round(kqpoint,6),kpoints,'rows');
         if ~found
             error('k+q point is not an existing k-point: [%f %f %f].',kqpoint(1),kqpoint(2),kqpoint(3));
         end
