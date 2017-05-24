@@ -7,11 +7,11 @@
 
 %% User input
 
-datadir = '~/Downloads/data/';
+datadir = '~/Downloads/SrVO3/';
 seedname = 'SrVO3';
-wann_bands = 1:8;
+wann_bands = 1:3;
 iband = 1;
-jband = 1;
+jband = 2;
 
 %% Construction of the screened interaction matrix
 
@@ -67,11 +67,10 @@ end
 Nfft = double(h5read([datadir 'epsmat.h5'],'/mf_header/gspace/FFTgrid'));
 
 % And the k-point weights
-kweights = read_kweights(datadir);
+kweights = read_kweights(datadir,kpoints);
 
 % Compute diagonal aux. functions F_{i,i} and F_{j,j} (if necessary)
 [Fii, gindex, ekin] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,iband,iband);
-
 if iband ~= jband
     Fjj = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,jband,jband);
 else

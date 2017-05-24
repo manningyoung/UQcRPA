@@ -1,6 +1,6 @@
-function [ kweights ] = read_kweights(datadir)
+function [ kweights ] = read_kweights(datadir,kpoints)
 % NOT YET IMPLEMENTED - assumes no k-point reduction (on Wannier grid).
 
-kweights = ones(1,125);
+kweights = ones(1,length(kpoints));
 
 end
