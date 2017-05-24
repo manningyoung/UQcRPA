@@ -5,6 +5,8 @@ function [ gvecs , qpoints ] = read_gvecs(fname)
 % G'=gvecs(2,:) for a given q.
 %
 % Also returns the corresponding q-points.
+%
+% FIXME: epsilon.log cannot be from a calculation with skip_epsilon.
 
 fprintf('Reading G-vectors...');
 
