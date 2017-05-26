@@ -66,8 +66,8 @@ end
 % And the dimensions of the FFT
 Nfft = double(h5read([datadir 'epsmat.h5'],'/mf_header/gspace/FFTgrid'));
 
-% And the k-point weights
-kweights = read_kweights(datadir,kpoints);
+% Assume the Wannier k-grid isn't symmetry reduced
+kweights = ones(1,length(kpoints));
 
 % Compute diagonal aux. functions F_{i,i} and F_{j,j} (if necessary)
 [Fii, gindex, ekin] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,iband,iband);
