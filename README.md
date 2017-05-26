@@ -10,6 +10,7 @@ Known bugs - use with caution.
 ## Quick start guide
 The package is run from the `main` script. In this file, specify the following:
 * `datadir`: Location of the input data (described below). Defaults to the UQcRPA directory.
+* `seedname`: The same seedname used for wannier90 calculations.
 * `wann_bands`: Band indices corresponding to the active subspace (Wannier bands).
 * `iband`, `jband`: The matrix element U_{iband, jband} to be calculated.
 
