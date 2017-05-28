@@ -5,8 +5,6 @@ function [ gvecs , qpoints ] = read_gvecs(fname)
 % G'=gvecs(2,:) for a given q.
 %
 % Also returns the corresponding q-points.
-%
-% FIXME: epsilon.log cannot be from a calculation with skip_epsilon.
 
 fprintf('Reading G-vectors...');
 
@@ -25,14 +23,14 @@ while ~feof(infile)
         qpoints = [qpoints; str2double(parts{1}{2}) str2double(parts{1}{3}) str2double(parts{1}{4})];
     end
     
-    % If the line has at least 4 parts and the 4th is 'epsilon', it's the
+    % If the line has at least 5 parts and the 5th is 'chi(g,gp)', it's the
     % beginning of a set of matrix elements and corresponding G-vectors
-    if (numel(parts{1}) >= 4) && (strcmp(parts{1}{4},'epsilon'))
+    if (numel(parts{1}) >= 5) && (strcmp(parts{1}{5},'chi(g,gp)'))
         linestr = fgets(infile); % advance to first line of data
         parts = textscan(linestr,'%f');
         % Read all G-vectors
         gvecs{iq} = [];
-        while (numel(parts{1}) == 7) && (~feof(infile))
+        while (numel(parts{1}) == 9) && (~feof(infile))
             gvecs{iq} = [gvecs{iq}; parts{1}(1) parts{1}(2) parts{1}(3)];
             linestr = fgets(infile);
             parts = textscan(linestr,'%f');
