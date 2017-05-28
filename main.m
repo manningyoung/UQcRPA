@@ -7,11 +7,11 @@
 
 %% User input
 
-datadir = '~/Downloads/SrVO3/';
+datadir = '~/Downloads/SrVO3_4x4x4/';
 seedname = 'SrVO3';
 wann_bands = 1:3;
 iband = 1;
-jband = 2;
+jband = 1;
 
 %% Construction of the screened interaction matrix
 
@@ -56,6 +56,9 @@ if exist([datadir 'unk.mat']) == 2
     fprintf('Done.\n');
 else
     unk = transform_bloch(datadir,unitary_matrix,wann_bands,kpoints);
+    fprintf('Saving unk to file for next time...');
+    save([datadir 'unk.mat'],'unk');
+    fprintf('Done.\n');
 end
 
 %% Calculation of the auxiliary functions
@@ -85,30 +88,3 @@ fprintf('=========================\n');
 fprintf('U_{%d,%d} = %.2f%+.2fi Ry\n',iband,jband,real(Uij),imag(Uij));
 fprintf('=========================\n');
 fprintf('Program completed successfully in %.1fs!\n',t_elapsed);
-
-%% Misc. plotting/debugging
-
-% close all
-% 
-% figure
-% [sqrtekin, sortidx] = sort(sqrt(ekin{1}));
-% plot(sqrtekin,abs(Fii{1}(sortidx)).^2,':');
-% xlabel('|q+G|')
-% ylabel('|F_{11}(G,q=0)|^2')
-% xlim([0 10])
-% hold on
-% plot(sqrtekin,abs(Fii{1}(sortidx)).^2,'x');
-%
-
-% Plot the diagonal of the polarization potenal W^p=(W-v)(q=0)
-figure
-for ig=2:length(gvecs{1})
-    mynorm(ig-1) = norm(qpoints(1,:)+gvecs{1}(ig,:)); % |q+G|
-end
-[sortmynorm,sortidx] = sort(mynorm); % |q+G| sorted
-plot(sortmynorm,abs(Wp_diag{1}(sortidx)),'x'); % plot vs W^p with same sorting
-xlabel('|q+G|')
-ylabel('|W^p_{GG}(q=0)|')
-grid on
-hold on
-plot(sortmynorm,abs(Wp_diag{1}(sortidx)),':');
