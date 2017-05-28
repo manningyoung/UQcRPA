@@ -1,0 +1,40 @@
+#!/bin/bash -l
+
+# This script cleans up ALL output files.
+
+cd ./ESPRESSO
+
+cd ./00_kgrid
+rm -f WFN.out WFN.log WFNq.out WFNq.log qpoints.out qpoints.log kpoints.out kpoints_wan.out
+cd ..
+
+cd ./01_scf
+rm -f SrVO3.pw.out
+cd ..
+
+cd ./02_wfn
+rm -f SrVO3.pw.out SrVO3.pw2bgw.out
+cd ..
+
+cd ./03_band
+rm -f SrVO3.pw.out SrVO3.bands.out SrVO3.plotband.out
+rm -f bands.dat bands.dat.gnu bands.dat.rap
+rm -f bands.ps bands.pdf
+cd ..
+
+cd ./04_wann
+rm -f SrVO3.pw.out SrVO3.pw2wan.out SrVO3.wout
+rm -f SrVO3.amn SrVO3.mmn SrVO3.nnkp SrVO3.chk SrVO3.eig UNK* SrVO3_u.mat
+rm -f SrVO3_band.dat SrVO3_band.gnu SrVO3_band.kpt SrVO3_band.ps
+cd ..
+
+rm -rf ./tmp
+
+cd ..
+
+cd ./epsilon
+
+rm -f epsilon.out epsilon.log chi_converge.dat degeneracy.out
+rm -f chi0mat.h5 chimat.h5 eps0mat.h5 epsmat.h5 WFN WFNq
+
+cd ..

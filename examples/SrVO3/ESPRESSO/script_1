@@ -1,0 +1,62 @@
+#!/bin/bash -l
+#SBATCH -J SrVO3
+#SBATCH --time=06:00:00
+#SBATCH --ntasks=24
+#SBATCH --mem=24G
+
+# This script runs the ESPRESSO and wannier90 calculations.
+
+PW="pw.x"
+PW2BGW="pw2bgw.x"
+WAN="wannier90.x"
+PW2WAN="pw2wannier90.x"
+BAND="bands.x"
+PLOTBAND="plotband.x"
+
+MPIRUN="mpirun"
+
+# Use pools for many k-points
+NPOOL=6
+
+# Create ESPRESSO temp directory
+mkdir -p tmp
+
+# Run the SCF calculation
+# This uses the default number of bands 
+cd ./01_scf
+$MPIRUN $PW -npool $NPOOL < ./SrVO3.pw.in > ./SrVO3.pw.out
+cd ..
+
+# Run the band calculation
+# This also uses the default number of bands
+cd ./02_wfn
+$MPIRUN $PW -npool $NPOOL < ./SrVO3.pw.in > ./SrVO3.pw.out
+$MPIRUN $PW2BGW  < ./SrVO3.pw2bgw.in > ./SrVO3.pw2bgw.out
+cd ..
+
+# Create a band plot to check the system is as expected
+# This also uses the default number of bands
+cd ./03_band
+$MPIRUN $PW -npool $NPOOL < ./SrVO3.pw.in > ./SrVO3.pw.out
+$MPIRUN $BAND < ./SrVO3.bands.in > ./SrVO3.bands.out
+$PLOTBAND < ./SrVO3.plotband.in > ./SrVO3.plotband.out
+ps2pdf bands.ps bands.pdf
+rm -f bands.xmgr.*
+cd ..
+
+# Run the Wannier calculation on all k-points
+# This uses 15 bands (12 occupied + 3 partially)
+# And wannier90 runs on the top 3
+cd ./04_wann
+$MPIRUN $PW -npool $NPOOL < ./SrVO3.pw.in > ./SrVO3.pw.out
+$WAN -pp SrVO3
+$MPIRUN $PW2WAN < ./SrVO3.pw2wan > ./SrVO3.pw2wan.out
+$WAN SrVO3
+cd ..
+
+# Copy wavefunctions to the epsilon directory
+cp ./tmp/wfn.real ../epsilon/WFN
+cp ./tmp/wfn.real ../epsilon/WFNq
+
+# Clean up
+rm -rf ./tmp

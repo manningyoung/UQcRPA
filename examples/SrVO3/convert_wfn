@@ -1,0 +1,9 @@
+#!/bin/bash -l
+
+# This script converts WFN from binary to ASCII for inspection.
+
+BIN2ASC="mf_convert_wrapper.sh"
+
+cd ./epsilon
+srun $BIN2ASC WFN WFN_ASCII
+cd ..

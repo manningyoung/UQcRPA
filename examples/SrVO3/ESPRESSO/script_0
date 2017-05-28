@@ -1,0 +1,22 @@
+#!/bin/bash -l
+
+# This script produces the various k-grids rquired throughout the calculation.
+# The .out files are copied (manually) into the relevant input files.
+# Many of the required .in parameters can be obtained from the output of the
+# SCF calculation (script_1), so run that first if you want to change them.
+
+KGRID="kgrid.x"
+KMESH="kmesh.pl"
+
+cd ./00_kgrid
+
+# k-points for the band structure calculation
+$KGRID ./WFN.in ./WFN.out ./WFN.log
+
+# q-points for epsilon calculation
+# See epsilon.inp for usage
+$KGRID ./qpoints.in ./qpoints.out ./qpoints.log
+
+# Full set of k-points for Wannier construction
+$KMESH 8 8 8 > ./kpoints.out
+$KMESH 8 8 8 wan > ./kpoints_wan.out

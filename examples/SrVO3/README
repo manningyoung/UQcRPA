@@ -1,0 +1,28 @@
+================================================================================
+
+This is an example of how to prepare input data for UQcRPA using the benchmark
+material SrVO3. Note: semiconductors require a slightly different treatment
+involving a q-shift - see BerkeleyGW's silicon example for details.
+Also added simple run script for UQcRPA.
+
+================================================================================
+
+Get started:
+
+1. Install the required packages.
+  - Quantum ESPRESSO (6.0)
+  - wannier90 (2.1.0)
+  - BerkeleyGW (1.2.0)
+This example assumes ESPRESSO is installed in PARALLEL, and that all executable
+directories have been added to $PATH.
+
+2. READ EACH SCRIPT CAREFULLY and change them to suit your architecture. Then,
+run them in the order indicated (starting in the ESPRESSO directory).
+
+3. Copy the files described in the UQcRPA README into a single directory. Note:
+MATLAB may have issues with ln -s.
+
+4. Set the location of the directory (datadir) in run.m and run the UQcRPA
+calculation.
+
+================================================================================

@@ -1,0 +1,267 @@
+# epsilon.inp
+
+# Energy cutoff for the dielectric matrix, in Ry. The dielectric matrix
+# epsilon_{GG`} will contain all G-vectors with kinetic energy |q+G|^2
+# up to this cutoff.
+epsilon_cutoff           35.0
+
+# Total number of bands (valence+conduction) to sum over. Defaults to the
+# number of bands in the WFN file minus 1. FIXME: consider degeneracy.
+#number_bands            1000
+
+# Specify the Fermi level (in eV), if you want implicit doping
+# Note that value refers to energies AFTER scissor shift or eqp corrections.
+#fermi_level             0.0
+
+# The Fermi level is treated as an absolute value
+# or relative to that found from the mean field (default)
+#fermi_level_absolute
+#fermi_level_relative
+
+# RECOMMENDED fast FFTW truncation schemes
+# The Coulomb Interaction is cutoff on the edges of
+# the Wigner-Seitz Cell in the non-periodic directions
+# Periodic directions are a1,a2 for slabs and a3 for wires
+#cell_box_truncation
+#cell_wire_truncation
+#cell_slab_truncation
+
+# Analytic, but non-Wigner-Seitz Cell Truncation
+#spherical_truncation
+
+# For Spherical Truncation, radius in Bohr
+#coulomb_truncation_radius   10.00
+
+# Frequency dependence of the inverse dielectric matrix.
+# Set to 0 to compute the static inverse dielectric matrix (default).
+# Set to 2 to compute the full frequency dependent inverse dielectric matrix.
+# Set to 3 to compute the two frequencies needed for Godby-Needs GPP model.
+#frequency_dependence 0
+
+# Full frequency dependence method for the polarizability, if frequency_dependence==2:
+# 0: Real-Axis formalism, Adler-Wiser formula.
+# 1: Real-Axis formalism, spectral method (PRB 74, 035101, (2006))
+# 2: Contour-Deformation formalism, Adler-Wiser formula.
+#frequency_dependence_method 2
+
+# Plasma frequency (eV) needed for Contour-Deformation method. The exact value
+# is unimportant, especially if you have enough imaginary frequency points. We
+# recommend you keep this value fixed at 2 Ry.
+#plasma_freq 27.21138506d0
+
+# For frequency_dependence 3, the value of the purely imaginary frequency, in eV:
+#imaginary_frequency 27.21138506d0
+
+
+# Parameters for full-frequency-dependent calculations, in eV.
+#
+#
+# Method 0 - Real-Axis formalism with Adler-Wiser formula.
+# --------
+# Default values, which are good for typical semiconductors. The main
+# convergence knobs are:
+# - broadening: should the energy resolution due to k-point sampling, or
+#   a number as small as possible if you have a molecule.
+# - delta_frequency: should be converged (the smaller, the better). For
+#   molecules, delta_frequency should be the same as broadening.
+# - low_frequency_cutoff: should be larger than the maximum transition, i.e., the
+#   energy difference between the highest conduction band and the lowest valence band.
+#
+#broadening 0.1
+#delta_frequency (= broadening)
+#frequency_low_cutoff 200.0
+#frequency_high_cutoff (= 4*frequency_low_cutoff)
+#delta_frequency_step 1.0
+#
+#
+# Method 1 - Real-Axis formalism with spectral method.
+# --------
+# Default parameters. Same remarks as for method 1 apply here.
+#
+#broadening 0.1
+#delta_frequency (= broadening)
+#frequency_low_cutoff 200.0
+#frequency_high_cutoff (= 4*frequency_low_cutoff)
+#delta_frequency_step 1.0
+#delta_sfrequency (= delta_frequency)
+#delta_sfrequency_step (= delta_frequency_step)
+#sfrequency_low_cutoff (= frequency_low_cutoff)
+#sfrequency_high_cutoff (= sfrequency_low_cutoff)
+#
+#
+# Method 2 - Contour-Deformation formalism with Adler-Wiser formula (default).
+# --------
+# Default values, which are good for typical semiconductors. The main
+# convergence knobs are:
+# - broadening: should the energy resolution due to k-point sampling, or
+#   a number as small as possible if you have a molecule.
+# - delta_frequency: should be converged (the smaller, the better). For
+#   molecules, delta_frequency should be the same as broadening.
+# - low_frequency_cutoff: you should increase this valid if you wish to use
+#   the Sigma code and look into QP states deep in occupied manifold or high in
+#   the unoccupied manifold.
+#
+#broadening 0.25
+#delta_frequency (= broadening)
+#frequency_low_cutoff 10.0
+#number_imaginary_freqs 15
+#
+#
+# Description of the flags
+# ------------------------
+#
+# - Each val->cond transition is broadened by "broadening".
+# - A uniform frequency grid is set up from "init_frequency" (defaults to 0),
+#   up to "low_frequency_cutoff", with a spacing of "delta_frequency" between
+#   two frequencies.
+# For methods 1 and 2:
+# - A non-uniform frequency grid is setup from "low_frequency_cutoff" to
+#   "high_frequency_cutoff", where the frequency spacing gets increased by
+#   "delta_frequency_step".
+#
+# For method 2:
+# - A separate frequency grid is set-up for the spectral function. The variables
+#   "init_sfrequency", "delta_sfrequency", "delta_sfrequency_step",
+#   "sfrequency_low_cutoff", and "sfrequency_high_cutoff" define this grid, in
+#   an analogy to the flags used to define the grid for the polarizability matrix.
+#
+# For method 3:
+# - A frequency grid with "number_imaginary_freqs" is set-up on the imag axis.
+
+
+# Logging convergence of the head & tail of polarizability matrix with respect to conduction bands.
+# Set to -1 for no convergence test 
+# Set to 0 for the 5 column format including the extrapolated values (default).
+# Set to 1 for the 2 column format, real part only.
+# Set to 2 for the 2 column format, real and imaginary parts.
+#full_chi_conv_log -1
+
+# qx qy qz 1/scale_factor is_q0
+# scale_factor is for specifying values such as 1/3
+# is_q0 = 0 for regular, non-zero q-vectors (read val WFNs from WFN)
+# is_q0 = 1 for a small q-vector in semiconductors (read val WFNs from WFNq)
+# is_q0 = 2 for a small q-vector in metals (read val WFNs from WFN)
+# if present the small q-vector should be first in the list
+# You can generate this list with kgrid.x: just set the shifts to zero and use
+# same grid numbers as for WFN. Then replace the zero vector with q0.
+begin qpoints
+  0.000000    0.000000    0.005000   1.0   1
+  0.000000    0.000000    0.062500   1.0   0
+  0.000000    0.000000    0.125000   1.0   0
+  0.000000    0.000000    0.187500   1.0   0
+  0.000000    0.000000    0.250000   1.0   0
+  0.000000    0.000000    0.312500   1.0   0
+  0.000000    0.000000    0.375000   1.0   0
+  0.000000    0.000000    0.437500   1.0   0
+  0.000000    0.000000    0.500000   1.0   0
+  0.000000    0.000000    0.562500   1.0   0
+  0.000000    0.000000    0.625000   1.0   0
+  0.000000    0.000000    0.687500   1.0   0
+  0.000000    0.000000    0.750000   1.0   0
+  0.000000    0.000000    0.812500   1.0   0
+  0.000000    0.000000    0.875000   1.0   0
+  0.000000    0.000000    0.937500   1.0   0
+end
+
+# Scissors operator (linear fit of the quasiparticle
+# energy corrections) for the bands in WFN and WFNq.
+# For valence-band energies:
+# ev_cor = ev_in + evs + evdel * (ev_in - ev0)
+# For conduction-band energies:
+# ec_cor = ec_in + ecs + ecdel * (ec_in - ec0)
+# Defaults below. evs, ev0, ecs, ec0 are in eV.
+# If you have eqp.dat and eqp_q.dat files
+# this information is ignored in favor of the eigenvalues
+# in eqp.dat and eqp_q.dat.
+#evs     0.0
+#ev0     0.0
+#evdel   0.0
+#ecs     0.0
+#ec0     0.0
+#ecdel   0.0
+# or
+#cvfit   0.0 0.0 0.0 0.0 0.0 0.0
+
+# Set this to use eigenvalues in eqp.dat and eqp_q.dat
+# If not set, these files will be ignored.
+#eqp_corrections
+
+# Write the bare Coulomb potential V(q+G) to file
+#write_vcoul
+
+# Matrix Element Communication Method (Chi Sum Comm). Default is gcomm_matrix
+# which is good if nk*nc*nv > nmtx*nfreq. If nk*nc*nv < nfreq*nmtx
+# (nk*nv < nfreq since nc~nmtx), use gcomm_elements. Only "gcomm_elements"
+# is supported with the spectral method.
+#gcomm_matrix
+#gcomm_elements
+
+# Number of pools for distribution of valence bands
+# The default is chosen to minimize memory in calculation
+#number_valence_pools 1
+
+# By default, the code computes the polarizability matrix, constructs
+# the dielectric matrix, inverts it and writes the result to file epsmat.
+# Use keyword skip_epsilon to compute the polarizability matrix and
+# write it to file chimat. Use keyword skip_chi to read the polarizability
+# matrix from file chimat, construct the dielectric matrix, invert it and
+# write the result to file epsmat.
+#skip_epsilon
+#skip_chi
+
+# Use traditional simple binary format for epsmat/eps0mat instead of HDF5 file format.
+# Relevant only if code is compiled with HDF5 support.
+#dont_use_hdf5
+
+# Verbosity level, options are:
+# 1 = default
+# 2 = medium - info about k-points, symmetries, and eqp corrections.
+# 3 = high   - full dump of the reduced and unfolded k-points.
+# 4 = log    - log of various function calls. Use to debug code.
+# 5 = debug  - extra debug statements. Use to debug code.
+# 6 = max    - only use if instructed to, severe performance downgrade.
+# Note that verbosity levels are cumulative. Most users will want to stick
+# with level 1 and, at most, level 3. Only use level 4+ if debugging the code.
+#verbosity 1
+
+# (Full Frequency only) Calculates several frequencies in parallel. No "new" 
+# processors are used here, the chi summation is simply done in another order
+# way to decrease communication. This also allows the inversion of multiple
+# dielectric matrices simultaneously via ScaLAPACK, circumventing ScaLAPACK's
+# scaling problems. Can be very efficient for system with lots of G-vectors and when
+# you have many frequencies. In general gives speedup. However, in order to 
+# calculate N frequencies in parallel, the memory to store pol%gme is currently 
+# multiplied by N as well.
+#nfreq_group 1
+
+# EXPERIMENTAL FEATURES FOR TESTING PURPOSES ONLY
+# 'unfolded BZ' is from the kpoints in the WFN file
+# 'full BZ' is generated from the kgrid parameters in the WFN file
+# See comments in Common/checkbz.f90 for more details
+# Replace unfolded BZ with full BZ
+#fullbz_replace
+# Write unfolded BZ and full BZ to files
+#fullbz_write
+
+# The requested number of bands cannot break degenerate subspace
+# Use the following keyword to suppress this check
+# Note that you must still provide one more band in
+# wavefunction file in order to assess degeneracy
+#degeneracy_check_override
+
+# Instead of using the RHO FFT box to perform convolutions, we automatically 
+# determine (and use) the smallest box that is compatible with your epsilon
+# cutoff. This also reduces the amount of memory needed for the FFTs.
+# Although this optimization is safe, you can disable it by uncommenting the
+# following line:
+#no_min_fftgrid
+
+# Uncomment this flag if you would like to restart your Epsilon calculation
+# instead of starting it from scratch. Note that we can only reuse q-points
+# that were fully calculated. This flag is ignored unless you are running
+# the code with HDF5.
+#restart
+
+# Q-grid for the epsmat file. Defaults to the WFN k-grid.
+#qgrid 0 0 0
+

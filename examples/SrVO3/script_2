@@ -1,0 +1,19 @@
+#!/bin/bash -l
+#SBATCH -J SrVO3
+#SBATCH --time=12:00:00
+#SBATCH --ntasks=1
+#SBATCH --mem=12G
+
+# This script runs the epsilon calculation.
+# Run this TWICE: first with skip_epsilon in epsilon.inp and then without,
+# to produce both the chi and epsilon matrices.
+
+EPSILON="epsilon.real.x"
+DEGEN_CHK="degeneracy_check.x"
+
+MPIRUN="srun"
+
+cd ./epsilon
+$MPIRUN $DEGEN_CHK WFN > ./degeneracy.out
+$MPIRUN $EPSILON > ./epsilon.out
+cd ..
