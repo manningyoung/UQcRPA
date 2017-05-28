@@ -1,17 +1,10 @@
+function [ Uij ] = main(datadir,seedname,wann_bands,iband,jband)
 % ==============================================================================
 %
-%   UQcRPA (0.1) main job script
-%   See README for instructions
+%   UQcRPA main program
+%   See README for details
 %
 % ==============================================================================
-
-%% User input
-
-datadir = '~/Downloads/SrVO3_4x4x4/';
-seedname = 'SrVO3';
-wann_bands = 1:3;
-iband = 1;
-jband = 1;
 
 %% Construction of the screened interaction matrix
 
@@ -88,3 +81,5 @@ fprintf('=========================\n');
 fprintf('U_{%d,%d} = %.2f%+.2fi Ry\n',iband,jband,real(Uij),imag(Uij));
 fprintf('=========================\n');
 fprintf('Program completed successfully in %.1fs!\n',t_elapsed);
+
+end
