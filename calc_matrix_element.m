@@ -12,6 +12,9 @@ Uij = 0;
 for iq = 1:length(nmtx)
     for ig = 2:nmtx(iq) % FIXME: only body terms
         for igp = 2:nmtx(iq)
+            if iq==34
+                igp
+            end
             Uij = Uij + conj(Fii{iq}(gindex{iq}(ig)))*W_matrix{iq}(ig,igp)*Fjj{iq}(gindex{iq}(igp));
         end
     end

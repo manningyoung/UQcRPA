@@ -31,3 +31,4 @@ As well as the following from **wannier90**:
 ## Tips
 
 * The transformed Bloch states are saved in `datadir` and automatically loaded to speed up repeat calculations.
+* Same goes for the auxiliary functions. Much faster if many matrix elements are to be calculated.
