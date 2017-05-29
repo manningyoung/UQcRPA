@@ -30,20 +30,17 @@ while ~feof(infile)
         parts = textscan(linestr,'%f');
         % Read all G-vectors
         gvecs{iq} = [];
-        while numel(parts{1}) == 9 % && ~feof(infile) here results in last line being skipped
+        while numel(parts{1}) == 9 % may throw an EOF error
             gvecs{iq} = [gvecs{iq}; parts{1}(1) parts{1}(2) parts{1}(3)];
-            if feof(infile)
-                gvecs{iq} = unique(gvecs{iq},'rows','stable'); % 'stable' to maintain ordering
-                fclose(infile);
-                fprintf('Done.\n');
-                return % not ideal but works for now
-            else
-                linestr = fgets(infile);
-                parts = textscan(linestr,'%f');
-            end
+            linestr = fgets(infile);
+            parts = textscan(linestr,'%f');
         end
+        gvecs{iq} = unique(gvecs{iq},'rows','stable'); % 'stable' to maintain ordering
     end
     
 end
-                
+
+fclose(infile);
+fprintf('Done.\n');
+
 end
