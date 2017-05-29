@@ -26,14 +26,13 @@ while ~feof(infile)
     % If the line has at least 5 parts and the 5th is 'chi(g,gp)', it's the
     % beginning of a set of matrix elements and corresponding G-vectors
     if (numel(parts{1}) >= 5) && (strcmp(parts{1}{5},'chi(g,gp)'))
-        linestr = fgets(infile); % advance to first line of data
-        parts = textscan(linestr,'%f');
-        % Read all G-vectors
         gvecs{iq} = [];
-        while numel(parts{1}) == 9 % may throw an EOF error
-            gvecs{iq} = [gvecs{iq}; parts{1}(1) parts{1}(2) parts{1}(3)];
-            linestr = fgets(infile);
+        while (numel(parts{1}) > 0) && (~feof(infile))
+            linestr = fgets(infile); % advance to first line of data
             parts = textscan(linestr,'%f');
+            if numel(parts{1} == 9) % check we're still reading G-vectors
+                gvecs{iq} = [gvecs{iq}; parts{1}(1) parts{1}(2) parts{1}(3)];
+            end
         end
         gvecs{iq} = unique(gvecs{iq},'rows','stable'); % 'stable' to maintain ordering
     end

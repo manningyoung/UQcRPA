@@ -97,7 +97,7 @@ if exist([datadir Fjj_str]) == 2
     Fjj = F_mat.F;
     fprintf('Done.\n');
 else 
-    [Fjj, gindex] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,iband,iband);
+    [Fjj, gindex] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gvecs,jband,jband);
     fprintf('Saving Fjj to file for next time...');
     F = Fjj;
     save([datadir Fjj_str],'F','gindex');
@@ -108,9 +108,9 @@ end
 
 Uij = calc_matrix_element(W_matrix,Fii,Fjj,gindex,[nmtx0; nmtx]);
 t_elapsed = toc;
-fprintf('=======================\n');
+fprintf('==========================\n');
 fprintf('U_{%d,%d} = %.3f%+.3fi Ry\n',iband,jband,real(Uij),imag(Uij));
-fprintf('=======================\n');
+fprintf('==========================\n');
 fprintf('Program completed successfully in %.1fs!\n',t_elapsed);
 
 end
