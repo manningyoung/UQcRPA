@@ -29,11 +29,12 @@ while ~feof(infile)
             ir = 1;
         end
         if iband > num_band+1
-            error('Number of bands exceeded while reading %s. Possible formatting error.',fname)
+            error('Number of bands exceeded while reading %s. Possible formatting error.',fname);
         end
     end
 end
 
-fprintf('Done.\n')
+fclose(infile);
+fprintf('Done.\n');
 
 end
