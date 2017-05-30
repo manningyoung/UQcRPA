@@ -11,13 +11,16 @@
   celldm(1)=7.26
   nat=5
   ntyp=3
-  ecutwfc=25.0
+  ecutwfc=100.0
 	occupations='smearing'
 	smearing='gaussian'
 	degauss=0.01
   nbnd=15
  /
  &electrons
+  electron_maxstep=100
+  conv_thr=1.0d-10
+  diago_full_acc=.true.
  /
 ATOMIC_SPECIES
 Sr  88.0   Sr.pbe-mt_fhi.UPF

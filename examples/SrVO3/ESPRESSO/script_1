@@ -11,7 +11,6 @@ PW2BGW="pw2bgw.x"
 WAN="wannier90.x"
 PW2WAN="pw2wannier90.x"
 BAND="bands.x"
-PLOTBAND="plotband.x"
 
 MPIRUN="mpirun"
 
@@ -36,12 +35,10 @@ cd ..
 
 # Create a band plot to check the system is as expected
 # This also uses the default number of bands
+# The included plotband executable is bad - I plot the .gnu file manually
 cd ./03_band
 $MPIRUN $PW -npool $NPOOL < ./SrVO3.pw.in > ./SrVO3.pw.out
 $MPIRUN $BAND < ./SrVO3.bands.in > ./SrVO3.bands.out
-$PLOTBAND < ./SrVO3.plotband.in > ./SrVO3.plotband.out
-ps2pdf bands.ps bands.pdf
-rm -f bands.xmgr.*
 cd ..
 
 # Run the Wannier calculation on all k-points
