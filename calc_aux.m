@@ -5,7 +5,6 @@ function [ Fij , gindex , ekin] = calc_aux(unk,kpoints,kweights,qpoints,Nfft,gve
 % And ekin = |q+G|^2 (useful for plotting/debugging).
 %
 % FIXME: assumes spatially symmetric FFT (Nfft(1)=Nfft(2)=Nfft(3)=N).
-% FIXME: issues with k/q-grids containing repeating decimals
 
 fprintf('Calculating F_{%d,%d}...\n',iband,jband);
 
@@ -49,11 +48,11 @@ for iq = 1:length(qpoints)
     for ik = 1:length(kpoints) % FFT each k-point
         
         % Determine the index of the k+q point
-        kqpoint = mod(kpoints(ik,:)+qpoints(iq,:),1); % k+q (mod BZ)
-        kqpoint = round(kqpoint,8); % FIXME: round-off error
-        [found,ikq] = ismember(round(kqpoint,8),kpoints,'rows');
+        kqpoint = mod(round(kpoints(ik,:)+qpoints(iq,:),3),1); % k+q (mod BZ)
+        [found,ikq] = ismember(round(kqpoint,3),round(kpoints,3),'rows');
         if ~found
-            error('k+q point is not an existing k-point: [%f %f %f].',kqpoint(1),kqpoint(2),kqpoint(3));
+            error(['k+q = [%f %f %f] is not an existing k-point.\n' ...
+                   'This is likely due to rounding error. Please check calc_aux.'],kqpoint(1),kqpoint(2),kqpoint(3));
         end
         
         % Create the data array
